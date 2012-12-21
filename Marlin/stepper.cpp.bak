@@ -316,7 +316,7 @@ ISR(TIMER3_COMPA_vect)
 //      #endif
     } 
     else {
-        OCR3A=2000; // 1kHz.
+        OCR1A=2000; // 1kHz.
     }    
   } 
 
@@ -604,7 +604,7 @@ ISR(TIMER3_COMPA_vect)
 
       // step_rate to timer interval
       timer = calc_timer(acc_step_rate);
-      OCR3A = timer;
+      OCR1A = timer;
       acceleration_time += timer;
       #ifdef ADVANCE
         for(int8_t i=0; i < step_loops; i++) {
@@ -633,7 +633,7 @@ ISR(TIMER3_COMPA_vect)
 
       // step_rate to timer interval
       timer = calc_timer(step_rate);
-      OCR3A = timer;
+      OCR1A = timer;
       deceleration_time += timer;
       #ifdef ADVANCE
         for(int8_t i=0; i < step_loops; i++) {
@@ -646,7 +646,7 @@ ISR(TIMER3_COMPA_vect)
       #endif //ADVANCE
     }
     else {
-      OCR3A = OCR3A_nominal;
+      OCR1A = OCR1A_nominal;
     }
 
     // If current block is finished, reset pointer 
@@ -861,24 +861,24 @@ void st_init()
   #endif
   
   // waveform generation = 0100 = CTC
-  TCCR3B &= ~(1<<WGM33);
-  TCCR3B |=  (1<<WGM32);
-  TCCR3A &= ~(1<<WGM31); 
-  TCCR3A &= ~(1<<WGM30);
+  TCCR1B &= ~(1<<WGM13);
+  TCCR1B |=  (1<<WGM12);
+  TCCR1A &= ~(1<<WGM11); 
+  TCCR1A &= ~(1<<WGM10);
 
   // output mode = 00 (disconnected)
-  TCCR3A &= ~(3<<COM3A0); 
-  TCCR3A &= ~(3<<COM3B0); 
+  TCCR1A &= ~(3<<COM1A0); 
+  TCCR1A &= ~(3<<COM1B0); 
   
   // Set the timer pre-scaler
   // Generally we use a divider of 8, resulting in a 2MHz timer
   // frequency on a 16MHz MCU. If you are going to change this, be
   // sure to regenerate speed_lookuptable.h with
   // create_speed_lookuptable.py
-  TCCR3B = (TCCR3B & ~(0x07<<CS30)) | (2<<CS30);
+  TCCR1B = (TCCR1B & ~(0x07<<CS10)) | (2<<CS10);
 
-  OCR3A = 0x4000;
-  TCNT3 = 0;
+  OCR1A = 0x4000;
+  TCNT1 = 0;
   ENABLE_STEPPER_DRIVER_INTERRUPT();  
 
   #ifdef ADVANCE
